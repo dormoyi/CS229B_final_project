@@ -132,7 +132,7 @@ temperature_df = temperature_df.drop(columns=["date", "hr"])
 features_df = temperature_df.merge(humidity_df, on="timestamp", how="outer")
 print(len(features_df))
 # set timestamp as index
-features_df = features_df.set_index("timestamp")
+features_df = features_df.set_index("timestamp").to_period("H")
 
 df_pivoted2_trunc = df_pivoted2.iloc[-2000:]
 features_df_trunc = features_df.iloc[-2000:]
@@ -158,21 +158,23 @@ hts_test_label = HierarchicalTimeSeries(
     S=S,
 )
 
-dataset_train = hts_train.to_dataset()
+features_df_trunc = features_df_trunc.iloc[:-prediction_length, :]
+
+dataset_train = hts_train.to_dataset(feat_dynamic_real=features_df_trunc)
 # dataset_test_label = hts_test_label.to_dataset()
 
-predictor_input = hts_train.to_dataset()
+predictor_input = hts_train.to_dataset(feat_dynamic_real=features_df_trunc)
 # predictor_input = hts_test_label.to_dataset()
 
 
-estimator = DeepVARHierarchicalEstimator(
+estimator = DeepVARHierarchicalEstimator(to_period
     freq=hts_train.freq,
     prediction_length=prediction_length,
     trainer=Trainer(epochs=1),
     S=S,
 )
 
-experiment = "test8760"
+experiment = "output/testDynamic"
 
 def train(dataset):
     print("Training")
