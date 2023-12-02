@@ -5,3 +5,9 @@ __pycache__
 *.csv
 *.txt
 *.json
+models
+.Rproj.user
+CS229B_Milestone.pdf
+.RData
+.Rhistory
+*.Rproj
