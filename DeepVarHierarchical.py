@@ -134,8 +134,9 @@ print(len(features_df))
 # set timestamp as index
 features_df = features_df.set_index("timestamp").to_period("H")
 
-df_pivoted2_trunc = df_pivoted2.iloc[-2000:]
-features_df_trunc = features_df.iloc[-2000:]
+truncation = 4000
+df_pivoted2_trunc = df_pivoted2.iloc[-truncation:]
+features_df_trunc = features_df.iloc[-truncation:]
 
 hts = HierarchicalTimeSeries(
     ts_at_bottom_level=df_pivoted2_trunc,
@@ -167,7 +168,7 @@ predictor_input = hts_train.to_dataset(feat_dynamic_real=features_df_trunc)
 # predictor_input = hts_test_label.to_dataset()
 
 
-estimator = DeepVARHierarchicalEstimator(to_period
+estimator = DeepVARHierarchicalEstimator(
     freq=hts_train.freq,
     prediction_length=prediction_length,
     trainer=Trainer(epochs=1),
@@ -246,26 +247,28 @@ assert top_series.shape == (prediction_length,)
 
 top_series_label = np.array(hts_test_label.ts_at_all_levels[0][-prediction_length:])
 
-# plt.figure(figsize=(12, 5))
-# plt.plot(top_series_label, label="target")
-# plt.plot(top_series, label="forecast")
-# plt.legend()
-# plt.grid(which="both")
-# plt.show()
+plt.figure(figsize=(12, 5))
+plt.plot(top_series_label, label="target")
+plt.plot(top_series, label="forecast")
+plt.legend()
+plt.grid(which="both")
+plt.show()
 
 
 # use cs224n environment
 
-# add additional variables
-
 # get colab pro and run the whole model on it
+# get benchmarking results with inference time
 
 # check hyperparameters (and do some grid search?)
 # get loss and training curves 
 
 # get plots and add them to the report
 
+# do a figure of the model
+
 # evaluate reconciliation level
+# try to change error metric
 
 # check what time-series to take out for benchmarking
 # add inference time in benchmarking (and memory usage)
